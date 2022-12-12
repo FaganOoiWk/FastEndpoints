@@ -42,6 +42,20 @@ public static class MainExtensions
         return services;
     }
 
+    public static List<int> GetAllCurrentVersions()
+    {
+        List<int> versions = new List<int>();
+        foreach (var endpointDefinition in Endpoints.Found)
+        {
+            dynamic classInit = Activator.CreateInstance(endpointDefinition.EndpointType);
+            classInit.Definition = new EndpointDefinition();
+            classInit.Configure();
+            if (!versions.Contains(classInit.Definition.Version.Current))
+                versions.Add(classInit.Definition.Version.Current);
+        }
+        return versions;
+    }
+
     /// <summary>
     /// finalizes auto discovery of endpoints and prepares FastEndpoints to start processing requests
     /// <para>HINT: this is the combination of <see cref="UseFastEndpoints(IApplicationBuilder, Action{Config}?)"/> and <see cref="MapFastEndpoints(IEndpointRouteBuilder, Action{Config}?)"/>.
